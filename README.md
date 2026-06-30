@@ -56,6 +56,7 @@ queuemaster/
 │   ├── vite.config.js
 │   └── package.json
 ├── docker-compose.yml
+├── screenshot.png
 └── README.md
 ```
 
