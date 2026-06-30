@@ -1,6 +1,6 @@
 # QueueMaster
 
-A simple web application for small businesses to manage a customer waiting queue. Built for the Tell Me Software Engineering Internship assignment.
+A simple web application for small businesses to manage a customer waiting queue.
 
 ## Project Overview
 
@@ -14,6 +14,11 @@ QueueMaster lets a business owner:
 
 **Tech stack:** React (Vite), Node.js (Express), MongoDB, Docker, Axios.
 
+## Screenshot
+
+![QueueMaster](./screenshot.png)
+
+
 ## Architecture
 
 The app runs as three Docker containers: **frontend** (React + Nginx), **backend** (Express REST API), and **mongodb** (database). The frontend talks to the backend via `/api`; in production, Nginx proxies those requests to the Express server.
@@ -26,7 +31,7 @@ Chose MongoDB over in-memory storage so the queue survives server restarts — r
 
 
 ```
-tellme/
+queuemaster/
 ├── backend/
 │   ├── config/           # Database connection
 │   ├── controllers/      # Request handlers
@@ -53,6 +58,14 @@ tellme/
 ├── docker-compose.yml
 └── README.md
 ```
+
+## Design Decisions
+
+- **MongoDB over in-memory** — Queue data persists across restarts; a barber shop shouldn't lose its queue if the server restarts mid-day
+- **Server-side transition enforcement** — Status rules (waiting → serving → completed) are enforced on the backend, not just the UI, so the API is safe to use directly
+- **Nginx reverse proxy** — Single port (3000) for the frontend in production; no CORS issues, cleaner setup
+- **PATCH over PUT for status** — Only the status field changes, so PATCH is semantically correct over a full PUT replace
+- **409 over 400 for invalid transitions** — 400 means bad request format; 409 Conflict is the correct HTTP code when the request is valid but conflicts with current state
 
 ## API Documentation
 
@@ -140,8 +153,8 @@ Names are trimmed before saving.
 1. Clone the repository:
 
    ```bash
-   git clone <your-repo-url>
-   cd tellme
+   git clone https://github.com/Hariom-Jangir/queuemaster
+   cd queuemaster
    ```
 
 2. Build and start all services:
@@ -220,6 +233,11 @@ docker run -p 5000:5000 \
 
 # Frontend (requires backend reachable as "backend" hostname or update nginx.conf)
 docker run -p 3000:80 queuemaster-frontend
+
+> Note: For a fully self-contained setup, use Option 1 (Docker Compose) — 
+> it includes MongoDB automatically. Running containers individually 
+> requires MongoDB already running locally on port 27017.
+
 ```
 
 ## Environment Variables
