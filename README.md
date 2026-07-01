@@ -283,6 +283,4 @@ docker run -p 3000:80 queuemaster-frontend
 - **No pagination** — Suitable for small queues only
 - **No data export or history** — Completed customers stay visible until removed
 
-## License
 
-ISC
